@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Expense Tracker</title>
+  {% load static %}
+  <link rel="stylesheet" href="{% static 'styles.css' %}">
+</head>
+<body>
+  <!-- Header with Dashboard -->
+  <header id="header">
+    <h1>Dashboard</h1>
+    <p>Total Expenses: <strong>${{ amount.total_expenses }}</strong> | Budget Remaining: <strong>${{ amount.budget_remaining }}</strong></p>
+  </header>
+
+  <div id="content-wrapper">
+    <!-- Sidebar with Expand/Collapse -->
+    <div id="sidebar" class="collapsed">
+      <button id="toggle-btn">☰</button>
+      <ul>
+        <li><a href="/welcome" class="sidebar-link">Home</a></li>
+        <li><a href="/add_expense/" class="sidebar-link">Add Expense</a></li>
+        <li><a href="/view-expenses" class="sidebar-link">View Expenses</a></li>
+        <li><a href="/settings" class="sidebar-link">Settings</a></li>
+        <li><a href="/logout" class="sidebar-link">Log out</a></li>
+      </ul>
+    </div>
+
+    <!-- Main Content Split into Two Divisions -->
+    <main>
+      <div id="left-panel">
+        <!-- Add Expense Form -->
+        <section>
+          <h2>Add Expense</h2>
+          <form action="/add_expense/" method="post">
+            {% csrf_token %}
+            <label for="date">Date:</label>
+            <input type="date" id="date" name="date" required />
+
+            <label for="amount">Amount:</label>
+            <input type="number" id="amount" name="amount" required />
+
+            <label for="category">Category:</label>
+            <select id="category" name="category" required>
+              <option value="Food">Food</option>
+              <option value="Transport">Transport</option>
+              <option value="Shopping">Shopping</option>
+              <option value="Others">Others</option>
+            </select>
+
+            <label for="description">Description:</label>
+            <textarea id="description" name="description"></textarea>
+
+            <button type="submit">Add Expense</button>
+          </form>
+        </section>
+      </div>
+
+      <div id="right-panel">
+        <!-- View Expenses Section -->
+        <section>
+          <h2>Expense List</h2>
+          <table>
+            <thead>
+              <tr>
+                <th>Date</th>
+                <th>Amount</th>
+                <th>Category</th>
+                <th>Description</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for expense in expenses %}
+              <tr>
+                <td>{{ expense.date }}</td>
+                <td>${{ expense.amount }}</td>
+                <td>{{ expense.category }}</td>
+                <td>{{ expense.description }}</td>
+              </tr>
+              {% empty %}
+              <tr>
+                <td colspan="4">No expenses found</td>
+              </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </section>
+      </div>
+    </main>
+  </div>
+
+  <script>
+    const toggleBtn = document.getElementById('toggle-btn');
+    const sidebar = document.getElementById('sidebar');
+
+    toggleBtn.addEventListener('click', () => {
+      sidebar.classList.toggle('collapsed');
+    });
+  </script>
+</body>
+</html>

@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Expense Tracker - Home</title>
+  {% load static %}
+  <link rel="stylesheet" href="{% static 'styles.css' %}">
+  <style>
+    #main-content {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 80vh;
+      text-align: center;
+    }
+
+    section {
+      background-color: white;
+      padding: 40px;
+      border-radius: 12px;
+      box-shadow: 0 8px 16px rgba(0,0,0,0.1);
+      max-width: 500px;
+      width: 100%;
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    section:hover {
+      transform: translateY(-10px);
+      box-shadow: 0 12px 24px rgba(0,0,0,0.2);
+    }
+
+    h2 {
+      color: #007bff;
+      margin-bottom: 20px;
+    }
+
+    p, label, input {
+      font-size: 18px;
+      margin-bottom: 10px;
+    }
+
+    button {
+      margin-top: 10px;
+      padding: 10px 20px;
+      background-color: #007bff;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+
+    button:hover {
+      background-color: #0056b3;
+    }
+
+    #add-expense-btn {
+      position: fixed;
+      bottom: 30px;
+      right: 30px;
+      background-color: #007bff;
+      color: white;
+      border: none;
+      border-radius: 50%;
+      width: 60px;
+      height: 60px;
+      font-size: 30px;
+      cursor: pointer;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+    }
+
+    #add-expense-btn:hover {
+      background-color: #0056b3;
+    }
+
+    #edit-summary-form {
+      display: none;
+      margin-top: 20px;
+    }
+  </style>
+</head>
+<body>
+  <!-- Header with Dashboard -->
+  <header id="header">
+    <h1>Welcome, {{ user.username }}</h1>
+    <p> Total Budget: <strong>${{ user.total_budget }}</strong> | Remaining Budget: <strong>${{ user.budget_remaining }}</strong></p>
+  </header>
+
+  <div id="content-wrapper">
+    <!-- Sidebar with Expand/Collapse -->
+    <div id="sidebar" class="collapsed">
+      <button id="toggle-btn">☰</button>
+      <ul>
+        <li><a href="/welcome" class="sidebar-link">Home</a></li>
+        <li><a href="/home" class="sidebar-link">Add Expense</a></li>
+        <li><a href="/view-expenses" class="sidebar-link">View Expenses</a></li>
+        <li><a href="/settings" class="sidebar-link">Settings</a></li>
+        <li><a href="/logout" class="sidebar-link">Log out</a></li>
+      </ul>
+    </div>
+
+    <!-- Main Content with User Info and Summary -->
+    <main id="main-content">
+      <section>
+        <h2>Account Summary</h2>
+        <p><strong>Name:</strong> {{ user.username }}</p>
+        <p><strong>Email:</strong> <span id="email-display">{{ user.email }}</span></p>
+        <p><strong>Total Budget:</strong> <span id="budget-display">${{ user.total_budget }}</span></p>
+        <button id="edit-btn">Edit Account Summary</button>
+
+        <!-- Edit Form -->
+        <div id="edit-summary-form">
+          <h2>Edit Account Summary</h2>
+          <form action="/edit_summary/" method="post">
+            {% csrf_token %}
+            <label for="email">Email:</label>
+            <input type="email" id="email" name="email" value="{{ user.email }}" required />
+
+            <label for="add_amount">Add amount to Budget:</label>
+            <input type="number" id="add_amount" name="add_amount" value="{{ add_amount }}" required />
+
+            <button type="submit">Save Changes</button>
+            <button type="button" id="cancel-btn">Cancel</button>
+          </form>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <!-- Plus Button for Adding Expenses -->
+  <button id="add-expense-btn" onclick="window.location.href='/home'">+</button>
+
+  <script>
+    const toggleBtn = document.getElementById('toggle-btn');
+    const sidebar = document.getElementById('sidebar');
+    const editBtn = document.getElementById('edit-btn');
+    const cancelBtn = document.getElementById('cancel-btn');
+    const editForm = document.getElementById('edit-summary-form');
+
+    toggleBtn.addEventListener('click', () => {
+      sidebar.classList.toggle('collapsed');
+    });
+
+    editBtn.addEventListener('click', () => {
+      editForm.style.display = 'block';
+      editBtn.style.display = 'none';
+    });
+
+    cancelBtn.addEventListener('click', () => {
+      editForm.style.display = 'none';
+      editBtn.style.display = 'block';
+    });
+  </script>
+</body>
+</html>
